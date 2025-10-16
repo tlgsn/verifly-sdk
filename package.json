@@ -1,6 +1,6 @@
 {
   "name": "verifly-sdk",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Official Node.js SDK for Verifly - Inbound 2FA Verification System with HMAC-SHA256 Authentication",
   "main": "src/index.js",
   "types": "types/index.d.ts",

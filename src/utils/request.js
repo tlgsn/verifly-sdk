@@ -33,37 +33,77 @@ class RequestHandler {
         'Content-Type': 'application/json',
         'User-Agent': 'verifly-sdk/1.0.0',
       },
-    });
-
-    // Request interceptor (add authentication headers)
-    this.client.interceptors.request.use(
-      (config) => {
+      // Transform request to add signature AFTER JSON.stringify (for POST/PUT only)
+      transformRequest: [(data, headers) => {
+        // Skip if no data (GET/DELETE will be handled by interceptor)
+        if (!data) {
+          return data;
+        }
+        
+        // Convert data to JSON string
+        const jsonString = JSON.stringify(data);
+        
         // Generate timestamp
         const timestamp = Date.now().toString();
         
         // Generate signature (HMAC-SHA256 of timestamp + payload)
-        const payload = config.data ? JSON.stringify(config.data) : '';
-        const data = `${timestamp}${payload}`;
+        const message = `${timestamp}${jsonString}`;
         const signature = crypto
           .createHmac('sha256', this.secretKey)
-          .update(data)
+          .update(message)
           .digest('hex');
         
         // Add authentication headers
-        config.headers['X-API-Key'] = this.apiKey;
-        config.headers['X-Signature'] = signature;
-        config.headers['X-Timestamp'] = timestamp;
+        headers['X-API-Key'] = this.apiKey;
+        headers['X-Signature'] = signature;
+        headers['X-Timestamp'] = timestamp;
         
         if (this.debug) {
-          console.log('[Verifly SDK] Request:', {
+          console.log('[Verifly SDK] Request (POST/PUT):', {
+            payload: jsonString,
+            timestamp: timestamp,
+            message: message,
+            signature: signature
+          });
+        }
+        
+        return jsonString;
+      }],
+    });
+
+    // Request interceptor (for GET requests without body)
+    this.client.interceptors.request.use(
+      (config) => {
+        // If no body (GET, DELETE), add signature for empty object payload
+        if (!config.data && (config.method === 'get' || config.method === 'delete')) {
+          const timestamp = Date.now().toString();
+          const payload = '{}';  // Backend uses JSON.stringify(req.body) which is {}
+          const message = `${timestamp}${payload}`;
+          const signature = crypto
+            .createHmac('sha256', this.secretKey)
+            .update(message)
+            .digest('hex');
+          
+          config.headers['X-API-Key'] = this.apiKey;
+          config.headers['X-Signature'] = signature;
+          config.headers['X-Timestamp'] = timestamp;
+          
+          if (this.debug) {
+            console.log('[Verifly SDK] Request (GET/DELETE):', {
+              method: config.method.toUpperCase(),
+              url: config.url,
+              timestamp: timestamp,
+              message: message,
+              signature: signature
+            });
+          }
+        }
+        
+        if (this.debug) {
+          console.log('[Verifly SDK] Final Request:', {
             method: config.method.toUpperCase(),
             url: config.url,
-            data: config.data,
-            headers: {
-              'X-API-Key': this.apiKey,
-              'X-Timestamp': timestamp,
-              'X-Signature': signature.substring(0, 16) + '...',
-            },
+            headers: config.headers,
           });
         }
         return config;
