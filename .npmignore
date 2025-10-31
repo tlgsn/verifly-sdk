@@ -1,0 +1,38 @@
+# Development files
+examples/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Tests
+test/
+tests/
+*.test.js
+*.spec.js
+
+# Build
+.git/
+.github/
+
+# Configs
+.editorconfig
+.eslintrc*
+.prettierrc*
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.cache/
+coverage/
+.nyc_output/

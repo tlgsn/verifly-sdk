@@ -1,0 +1,45 @@
+{
+  "name": "verifly-sdk",
+  "version": "1.0.2",
+  "description": "Official Node.js SDK for Verifly - Inbound 2FA Verification System with HMAC-SHA256 Authentication",
+  "main": "src/index.js",
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "verifly",
+    "2fa",
+    "verification",
+    "sms",
+    "whatsapp",
+    "email",
+    "otp",
+    "authentication"
+  ],
+  "author": "SOCIFLY SOFTWARE LTD.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tlgsn/verifly-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tlgsn/verifly-sdk/issues"
+  },
+  "homepage": "https://www.verifly.net",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "files": [
+    "src/",
+    "types/",
+    "README.md",
+    "LICENSE"
+  ]
+}
